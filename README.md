@@ -11,6 +11,10 @@ Credit to the following people:
 - David Welch who wrote a lot of bare metal related stuff - https://github.com/dwelch67/raspberrypi
 - Mike McCauley who wrote the BCM2835 library for Linux - http://www.airspayce.com/mikem/bcm2835/
 
+Requires:
+- arm-none-eabi Toolchain: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
+- Edit file FreeRTOS/Demo/ARM6_BCM2835/MakefileRPI1.cfg to change TOOLCHAINROOT to the root of the toolchain
+
 Todo list:
 - Finish cleaning up BCM2835 lib
 - Finish and test mini UART driver

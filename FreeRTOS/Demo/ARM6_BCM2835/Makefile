@@ -49,7 +49,7 @@ INC+=-I../../Source/include
 # If you want to use the same Makefile.cfg and Makefile.inc
 # for several programs, you can specify the path to them
 # below.
-MAKEFILE_FILES=../../../../makefileconfig/
+MAKEFILE_FILES=./
 include $(MAKEFILE_FILES)MakefileRPI1.cfg
 include $(MAKEFILE_FILES)Makefile.inc
 
