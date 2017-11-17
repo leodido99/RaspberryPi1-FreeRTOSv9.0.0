@@ -1,0 +1,15 @@
+/*
+ * raspberrypi1.h
+ *
+ *  Created on: 10 Nov 2017
+ *      Author: leonard.bise
+ */
+
+#ifndef FREERTOS_DEMO_ARM6_BCM2835_DRIVERS_RASPBERRYPI1_H_
+#define FREERTOS_DEMO_ARM6_BCM2835_DRIVERS_RASPBERRYPI1_H_
+
+#define _RPI1_RDY_LED_PIN 16
+
+
+
+#endif /* FREERTOS_DEMO_ARM6_BCM2835_DRIVERS_RASPBERRYPI1_H_ */
