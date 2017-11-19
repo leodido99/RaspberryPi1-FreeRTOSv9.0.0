@@ -24,8 +24,7 @@ SRCPATHS+=../../Source/portable/GCC/ARM6_BCM2835
 ADDSRC=../../Source/portable/MemMang/heap_4.c
 
 # Add compilation flags
-CFLAGS=-nostartfiles 
-#-D__ARM_TIMER__
+CFLAGS=-nostartfiles -D__ARM_TIMER__
 
 # Add linking flags
 LDFLAGS=
@@ -79,3 +78,4 @@ kernel.img: $(OUTFILE)
 install: kernel.img
 	$(RM) -f $(SDPATH)/kernel.img
 	$(CP) $(OUTDIR)/kernel.img $(SDPATH)
+	diskutil unmountDisk /dev/disk2

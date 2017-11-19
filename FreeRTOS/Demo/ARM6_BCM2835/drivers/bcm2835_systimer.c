@@ -7,7 +7,8 @@
  *  Interface to the raspberry pi 1 system timer. This timer
  *  is managed by the GPU which runs at a frequency of 250Mhz.
  *  You can have 4 different compare values which can trigg an
- *  interruption.
+ *  interruption. System Timer interruption is called ARM Mailbox IRQ
+ *  for some reason.
  */
 
 #include "bcm2835_systimer.h"

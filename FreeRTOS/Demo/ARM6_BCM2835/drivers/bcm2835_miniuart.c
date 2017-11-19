@@ -32,18 +32,29 @@
 #define _BCM2835_MINIUART_BASE 0x20215040
 
 typedef struct {
-	uint32_t AUX_MU_IO_REG; /* Mini Uart I/O Data */
-	uint32_t AUX_MU_IER_REG; /* Mini Uart Interrupt Enable */
-	uint32_t AUX_MU_IIR_REG; /* Mini Uart Interrupt Identify */
-	uint32_t AUX_MU_LCR_REG; /* Mini Uart Line Control */
-	uint32_t AUX_MU_MCR_REG; /* Mini Uart Modem Control */
-	uint32_t AUX_MU_LSR_REG; /* Mini Uart Line Status */
-	uint32_t AUX_MU_MSR_REG; /* Mini Uart Modem Status */
-	uint32_t AUX_MU_SCRATCH; /* Mini Uart Scratch */
-	uint32_t AUX_MU_CNTL_REG; /* Mini Uart Extra Control */
-	uint32_t AUX_MU_STAT_REG; /* Mini Uart Extra Status */
-	uint32_t AUX_MU_BAUD_REG; /* Mini Uart Baudrate */
+	uint32_t AUX_MU_IO_REG; /* 0x20215040 Mini Uart I/O Data */
+	uint32_t AUX_MU_IER_REG; /* 0x20215044 Mini Uart Interrupt Enable */
+	uint32_t AUX_MU_IIR_REG; /* 0x20215048 Mini Uart Interrupt Identify */
+	uint32_t AUX_MU_LCR_REG; /* 0x2021504C Mini Uart Line Control */
+	uint32_t AUX_MU_MCR_REG; /* 0x20215050 Mini Uart Modem Control */
+	uint32_t AUX_MU_LSR_REG; /* 0x20215054 Mini Uart Line Status */
+	uint32_t AUX_MU_MSR_REG; /* 0x20215058 Mini Uart Modem Status */
+	uint32_t AUX_MU_SCRATCH; /* 0x2021505C Mini Uart Scratch */
+	uint32_t AUX_MU_CNTL_REG; /* 0x20215060 Mini Uart Extra Control */
+	uint32_t AUX_MU_STAT_REG; /* 0x20215064 Mini Uart Extra Status */
+	uint32_t AUX_MU_BAUD_REG; /* 0x20215068 Mini Uart Baudrate */
 } _bcm2835_uart1_regs;
+
+/* AUX_MU_CNTL_REG */
+#define _BCM2835_CNTL_RX_ENABLE 1
+#define _BCM2835_CNTL_TX_ENABLE 0
+
+/* AUX_MU_LSR_REG */
+#define _BCM2835_LSR_
+#define _BCM2835_LSR_TX_IDLE 6
+#define _BCM2835_LSR_TX_EMPTY 5
+#define _BCM2835_LSR_RECV_OVERRUN 1
+#define _BCM2835_LSR_DATA_RDY 0
 
 typedef struct {
 	uint32_t DR; /* Data Register */
@@ -84,7 +95,7 @@ static void configure_miniuart() {
 	pMiniUARTRegs->AUX_MU_IER_REG = 0;
 	/* Disable RX/TX so we can configure the UART */
 	pMiniUARTRegs->AUX_MU_CNTL_REG = 0;
-	/* Enable 8 bit mode (documenation is wrong, need both bit 0 and 1 to 1 to
+	/* Enable 8 bit mode (documentation is wrong, need both bit 0 and 1 to 1 to
 	 * enable 8 bit) */
 	pMiniUARTRegs->AUX_MU_LCR_REG = 3;
 	pMiniUARTRegs->AUX_MU_MCR_REG = 0;
@@ -101,12 +112,37 @@ void bcm2835_miniuart_open() {
 	bcm2835_aux_enable(_MINIUART, true);
 	/* Configure MiniUART */
 	configure_miniuart();
+	bcm2835_miniuart_enableRX(true);
+	bcm2835_miniuart_enableTX(true);
+}
+
+/* Returns through if transmitter FIFO can accept at least one byte */
+bool is_transmitter_empty() {
+	return (pMiniUARTRegs->AUX_MU_LSR_REG & (1 << _BCM2835_LSR_TX_EMPTY)) ? true : false;
 }
 
 void bcm2835_miniuart_sendchar(char c) {
-
+	while(!is_transmitter_empty());
+	/* Write symbol to transmit register */
+	pMiniUARTRegs->AUX_MU_IO_REG = c;
 }
 
+void bcm2835_miniuart_enableRX(bool enable) {
+	volatile uint32_t* pReg = &pMiniUARTRegs->AUX_MU_CNTL_REG;
+	if (enable) {
+		*pReg |= (1 << _BCM2835_CNTL_RX_ENABLE);
+	} else {
+		*pReg &= ~(1 << _BCM2835_CNTL_RX_ENABLE);
+	}
+}
 
+void bcm2835_miniuart_enableTX(bool enable) {
+	volatile uint32_t* pReg = &pMiniUARTRegs->AUX_MU_CNTL_REG;
+	if (enable) {
+		*pReg |= (1 << _BCM2835_CNTL_TX_ENABLE);
+	} else {
+		*pReg &= ~(1 << _BCM2835_CNTL_TX_ENABLE);
+	}
+}
 
 

@@ -274,7 +274,9 @@ static void prvSetupTimerInterrupt( void )
 	/* Calculate the match value required for our wanted tick rate. */
 	bcm2835_systimer_setcompare(portSYSTIMER, configCPU_CLOCK_HZ / configTICK_RATE_HZ);
 	bcm2835_systimer_clear(portSYSTIMER);
-	/* TODO Not working currently. Interrupt doesn't trigger */
+	/* TODO Not working currently. Interrupt doesn't trigger
+	 * Enable this IRQ -> System Timer interruption is called ARM Mailbox IRQ
+ *  for some reason. */
 #else
 	/* Use the ARM timer instead of the system timer.
 	 * It is less precise because the timer is dependent on the CPU load.

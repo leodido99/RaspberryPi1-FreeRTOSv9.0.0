@@ -14,4 +14,8 @@ void bcm2835_miniuart_open();
 
 void bcm2835_miniuart_sendchar(char c);
 
+void bcm2835_miniuart_enableRX(bool enable);
+
+void bcm2835_miniuart_enableTX(bool enable);
+
 #endif /* FREERTOS_DEMO_ARM6_BCM2835_DRIVERS_BCM2835_MINIUART_H_ */

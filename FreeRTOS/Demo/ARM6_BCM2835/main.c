@@ -3,6 +3,7 @@
 #include <semphr.h>
 
 #include "bcm2835.h"
+#include "bcm2835_miniuart.h"
 #include "raspberrypi1.h"
 
 SemaphoreHandle_t led1Semaphore;
@@ -34,8 +35,25 @@ void task2(void *pParam) {
 	}
 }
 
+/* Set first display char to ! */
+char c = '!';
+void task3(void *pParam) {
+	while(1) {
+		bcm2835_miniuart_sendchar(c);
+		c++;
+		if (c > 0x7E) {
+			/* reset char to ! */
+			c = '!';
+		}
+		vTaskDelay(500 / portTICK_PERIOD_MS);
+	}
+}
+
 int main (void) {
+	/* Initialize the bcm2835 lib */
 	bcm2835_init();
+	/* Initialize the miniuart */
+	bcm2835_miniuart_open();
 
 	/* Rdy Led as output */
 	bcm2835_gpio_fsel(_RPI1_RDY_LED_PIN, BCM2835_GPIO_FSEL_OUTP);
@@ -54,6 +72,7 @@ int main (void) {
 
 	xTaskCreate(task1, "LED_0", 128, NULL, 0, NULL);
 	xTaskCreate(task2, "LED_1", 128, NULL, 0, NULL);
+	xTaskCreate(task3, "UART", 128, NULL, 0, NULL);
 
 	vTaskStartScheduler();
 
