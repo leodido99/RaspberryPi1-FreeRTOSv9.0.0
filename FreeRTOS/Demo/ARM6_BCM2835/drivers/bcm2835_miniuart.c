@@ -116,15 +116,52 @@ void bcm2835_miniuart_open() {
 	bcm2835_miniuart_enableTX(true);
 }
 
-/* Returns through if transmitter FIFO can accept at least one byte */
+/* Returns true if transmitter FIFO can accept at least one byte */
 bool is_transmitter_empty() {
 	return (pMiniUARTRegs->AUX_MU_LSR_REG & (1 << _BCM2835_LSR_TX_EMPTY)) ? true : false;
+}
+
+bool is_data_ready() {
+	return (pMiniUARTRegs->AUX_MU_LSR_REG & (1 << _BCM2835_LSR_DATA_RDY)) ? true : false;
 }
 
 void bcm2835_miniuart_sendchar(char c) {
 	while(!is_transmitter_empty());
 	/* Write symbol to transmit register */
 	pMiniUARTRegs->AUX_MU_IO_REG = c;
+}
+
+void bcm2835_miniuart_sendstr(char *str) {
+	uint32_t idx = 0;
+	while(str[idx] != '\0') {
+		bcm2835_miniuart_sendchar(str[idx]);
+		idx++;
+	}
+}
+
+void bcm2835_miniuart_send_blocking(const void *buf, size_t count) {
+	const uint8_t* ptr = buf;
+	size_t actual = 0;
+	for(actual = 0; actual < count; actual++) {
+		while(!is_transmitter_empty());
+		pMiniUARTRegs->AUX_MU_IO_REG = *ptr;
+		ptr++;
+	}
+}
+
+void bcm2835_miniuart_receivechar(char* c) {
+	while(!is_data_ready());
+	*c = pMiniUARTRegs->AUX_MU_IO_REG;
+}
+
+void bcm2835_miniuart_receive_blocking(void *buf, size_t count) {
+	uint8_t* ptr = buf;
+	size_t actual = 0;
+	for(actual = 0; actual < count; actual++) {
+		while(!is_data_ready());
+		*ptr = pMiniUARTRegs->AUX_MU_IO_REG;
+		ptr++;
+	}
 }
 
 void bcm2835_miniuart_enableRX(bool enable) {

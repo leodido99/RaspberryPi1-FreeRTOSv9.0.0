@@ -24,7 +24,8 @@ SRCPATHS+=../../Source/portable/GCC/ARM6_BCM2835
 ADDSRC=../../Source/portable/MemMang/heap_4.c
 
 # Add compilation flags
-CFLAGS=-nostartfiles -D__ARM_TIMER__
+CFLAGS=-nostartfiles
+# -D__SYS_TIMER__ to use the Sys Timer
 
 # Add linking flags
 LDFLAGS=
@@ -70,7 +71,7 @@ SDPATH=/Volumes/boot
 #  - strip: Strips the output file (Alter params with STRIPFLAGS)
 #  - framac-metrics: Create the metrics of the objects files (Alter params with FRAMACFLAGS)
 # =============================================================================
-all: list $(OUTDIR) $(SRCFILES) $(OUTFILE) kernel.img
+all: list $(OUTDIR) $(SRCFILES) $(OUTFILE) kernel.img objdump
 
 kernel.img: $(OUTFILE)
 	$(OBJCOPY) -O binary $(OUTFILE) $(OUTDIR)/kernel.img

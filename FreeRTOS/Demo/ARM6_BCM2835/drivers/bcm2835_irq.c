@@ -9,16 +9,16 @@
 static INTERRUPT_VECTOR g_VectorTable[BCM2835_INTC_TOTAL_IRQ];
 
 typedef struct {
-	unsigned long	IRQBasic;	// Pending 0
-	unsigned long	Pending1;
-	unsigned long	Pending2;
-	unsigned long	FIQCtrl;
-	unsigned long	Enable1;
-	unsigned long	Enable2;
-	unsigned long	EnableBasic;
-	unsigned long	Disable1;
-	unsigned long	Disable2;
-	unsigned long	DisableBasic;
+	uint32_t IRQBasic;
+	uint32_t Pending1;
+	uint32_t Pending2;
+	uint32_t FIQCtrl;
+	uint32_t Enable1;
+	uint32_t Enable2;
+	uint32_t EnableBasic;
+	uint32_t Disable1;
+	uint32_t Disable2;
+	uint32_t DisableBasic;
 } BCM2835_INTC_REGS;
 
 static volatile BCM2835_INTC_REGS * const pRegs = (BCM2835_INTC_REGS *) (BCM2835_BASE_INTC);

@@ -2,7 +2,11 @@
 #include <task.h>
 #include <semphr.h>
 
+#include <stdio.h>
+
 #include "bcm2835.h"
+#include "bcm2835_irq.h"
+#include "bcm2835_systimer.h"
 #include "bcm2835_miniuart.h"
 #include "raspberrypi1.h"
 
@@ -35,9 +39,9 @@ void task2(void *pParam) {
 	}
 }
 
-/* Set first display char to ! */
-char c = '!';
 void task3(void *pParam) {
+	/* Set first display char to ! */
+	char c = '!';
 	while(1) {
 		bcm2835_miniuart_sendchar(c);
 		c++;
@@ -49,14 +53,37 @@ void task3(void *pParam) {
 	}
 }
 
+void timerirq(uint32_t nIRQ, void *pParam) {
+	bcm2835_miniuart_sendstr("timer irq\n\r");
+	bcm2835_systimer_clear(_SYSTIMER1);
+	bcm2835_systimer_setcompareincrement(_SYSTIMER1, BCM2835_SYSTIMER_FREQ - 1);
+}
+
+void timerirq2(uint32_t timer) {
+	printf("timerirq2 %d\n\r", (int)timer);
+}
+
 int main (void) {
 	/* Initialize the bcm2835 lib */
 	bcm2835_init();
-	/* Initialize the miniuart */
+	/* Initialize the miniuart (Otherwise printf doesn't work) */
 	bcm2835_miniuart_open();
+
+	/* Send message */
+	printf("Welcome to FreeRTOSv%d.0.0\n\r", 9);
 
 	/* Rdy Led as output */
 	bcm2835_gpio_fsel(_RPI1_RDY_LED_PIN, BCM2835_GPIO_FSEL_OUTP);
+
+	/* Configure a Timer */
+	//bcm2835_set_handler(_SYSTIMER1, timerirq2);
+	//bcm2835_systimer_setinterval(_SYSTIMER1, BCM2835_SYSTIMER_FREQ - 1);
+
+//	bcm2835_irq_register(_SYSTIMER1, timerirq, NULL);
+//	bcm2835_irq_enable(_SYSTIMER1);
+//	bcm2835_systimer_clear(_SYSTIMER1);
+//	/* Once per second */
+//	bcm2835_systimer_setcompareincrement(_SYSTIMER1, BCM2835_SYSTIMER_FREQ - 1);
 
     /* Attempt to create a semaphore. */
     led1Semaphore = xSemaphoreCreateBinary();

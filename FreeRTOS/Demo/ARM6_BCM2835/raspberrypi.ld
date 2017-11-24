@@ -59,11 +59,12 @@ SECTIONS {
 	} > RAM
 
 	/**
-	 *	Place HEAP here???
+	 *	Heap starts after .bss and grows towards Stack
 	 **/
+	 _heap_start_addr = .;
 
 	/**
-	 *	Stack starts at the top of the RAM, and moves down!
+	 *	Stack starts at the top of the RAM, and moves down towards heap
 	 **/
 	_estack = ORIGIN(RAM) + LENGTH(RAM);
 }
