@@ -1,5 +1,7 @@
 # Eclipse Project files
 *.cproject
 *.project
+# jetBrains IDEs Project files
+*.idea
 # Object files
 *.o

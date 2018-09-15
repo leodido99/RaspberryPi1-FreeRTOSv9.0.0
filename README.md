@@ -19,3 +19,11 @@ Todo list:
 - Finish cleaning up BCM2835 lib
 - Finish and test mini UART driver
 - Use System Timer for FreeRTOS scheduling instead of ARM Timer
+
+How to compile using docker:
+- Create the image
+- Mount the project directory to the container
+- Run the container and connect to its console
+- Navigate to the path specified when mounting the project directory `.../FreeRTOS/Demo/ARM6_BCM2835`
+- run `make` command 
+- output should be in the `out` directory in `/FreeRTOS/Demo/ARM6_BCM2835`
